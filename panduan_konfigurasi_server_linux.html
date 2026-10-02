@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Konfigurasi Server Linux - yoel.com</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#E50914',
+                            redDark: '#B80710',
+                            redGlow: '#FF1E27',
+                            black: '#0D0D0D',
+                            card: '#161616',
+                            cardBorder: '#2A2A2A',
+                            white: '#FAFAFA'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0D0D0D;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A2A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E50914;
+        }
+
+        /* Red Glow Effects */
+        .red-glow-sm {
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
+        }
+        .red-glow-lg {
+            box-shadow: 0 0 35px rgba(229, 9, 20, 0.35);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
+        }
+
+        /* Glassmorphism */
+        .glass-header {
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .terminal-header {
+            background: #1A1A1A;
+            border-bottom: 1px solid #2A2A2A;
+        }
+
+        /* Active Navigation Link Indicator */
+        .nav-link.active {
+            color: #E50914;
+            background: rgba(229, 9, 20, 0.1);
+            border-left: 3px solid #E50914;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-brand-black text-brand-white font-sans antialiased selection:bg-brand-red selection:text-white">
+
+    <!-- Top Fixed Header -->
+    <header class="sticky top-0 z-50 glass-header border-b border-brand-cardBorder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <button id="mobile-menu-btn" class="lg:hidden text-gray-300 hover:text-white focus:outline-none p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <div class="w-9 h-9 rounded-lg bg-brand-red flex items-center justify-center font-bold text-xl shadow-lg red-glow-sm">
+                        <i class="fa-solid fa-server text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-lg tracking-wider text-white">SYSADMIN<span class="text-brand-red">.DOCS</span></span>
+                        <span class="hidden sm:inline-block text-xs bg-brand-red/20 text-brand-red border border-brand-red/40 px-2 py-0.5 rounded-full ml-2 font-mono">yoel.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Identity Badge -->
+            <div class="hidden md:flex items-center space-x-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-white flex items-center justify-end gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Yoanes Yoel Abadi Tampubolon
+                    </p>
+                    <p class="text-xs text-gray-400">XI TKJ 1 &bull; SMKN 9 Kab. Tangerang</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-neutral-800 border-2 border-brand-red/60 flex items-center justify-center text-brand-red font-bold">
+                    YY
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex pt-6 gap-8">
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto z-40 w-72 bg-brand-card lg:bg-transparent border-r border-brand-cardBorder lg:border-none transition-transform duration-300 ease-in-out shrink-0 overflow-y-auto max-h-[calc(100vh-5rem)] p-4 lg:p-0">
+            <div class="space-y-6">
+                <!-- Quick Search Input -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Cari layanan..." class="w-full pl-9 pr-4 py-2 bg-brand-black border border-brand-cardBorder rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-colors">
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="space-y-1 text-sm font-medium" id="nav-container">
+                    <div class="px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-400">Umum</div>
+                    <a href="#pendahuluan" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all">
+                        <i class="fa-solid fa-circle-info text-brand-red w-4"></i> Pendahuluan & Identitas
+                    </a>
+                    <a href="#prasyarat" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all">
+                        <i class="fa-solid fa-list-check text-brand-red w-4"></i> Prasyarat Sistem
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Layanan Jaringan Dasar</div>
+                    <a href="#dhcp-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="dhcp server isc-dhcp-server network">
+                        <i class="fa-solid fa-network-wired text-brand-red w-4"></i> DHCP Server
+                    </a>
+                    <a href="#dns-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="dns server bind9 yoel.com domain">
+                        <i class="fa-solid fa-globe text-brand-red w-4"></i> DNS Server (BIND9)
+                    </a>
+                    <a href="#ntp-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="ntp server chrony time sync">
+                        <i class="fa-regular fa-clock text-brand-red w-4"></i> NTP Server
+                    </a>
+                    <a href="#proxy-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="proxy server squid filter web">
+                        <i class="fa-solid fa-filter text-brand-red w-4"></i> Proxy Server (Squid)
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Web & Data</div>
+                    <a href="#web-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="web server apache2 http host">
+                        <i class="fa-solid fa-window-maximize text-brand-red w-4"></i> Web Server (Apache2)
+                    </a>
+                    <a href="#database-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="database server mariadb mysql sql">
+                        <i class="fa-solid fa-database text-brand-red w-4"></i> Database (MariaDB)
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Berbagi Berkas</div>
+                    <a href="#samba-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="samba cifs windows share">
+                        <i class="fa-solid fa-folder-tree text-brand-red w-4"></i> Samba (SMB/CIFS)
+                    </a>
+                    <a href="#nfs-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="nfs network file system linux share">
+                        <i class="fa-solid fa-share-nodes text-brand-red w-4"></i> NFS Server
+                    </a>
+                    <a href="#ftp-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="ftp vsftpd file transfer">
+                        <i class="fa-solid fa-file-arrow-up text-brand-red w-4"></i> FTP Server (vsftpd)
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Keamanan & Akses Remote</div>
+                    <a href="#ssh-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="ssh openssh remote secure shell">
+                        <i class="fa-solid fa-terminal text-brand-red w-4"></i> SSH (OpenSSH)
+                    </a>
+                    <a href="#vpn-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="vpn openvpn tunnel secure">
+                        <i class="fa-solid fa-shield-halved text-brand-red w-4"></i> VPN (OpenVPN)
+                    </a>
+                    <a href="#firewall-ufw" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="firewall ufw security rules">
+                        <i class="fa-solid fa-fire text-brand-red w-4"></i> Firewall (UFW)
+                    </a>
+                    <a href="#fail2ban-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="fail2ban security ban brute force">
+                        <i class="fa-solid fa-lock text-brand-red w-4"></i> Intrusion Prevention (Fail2ban)
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Komunikasi</div>
+                    <a href="#mail-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="mail server postfix dovecot email">
+                        <i class="fa-solid fa-envelope text-brand-red w-4"></i> Mail Server (Postfix/Dovecot)
+                    </a>
+                    <a href="#xmpp-server" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all" data-search="xmpp prosody jabber chat instant messaging">
+                        <i class="fa-solid fa-comments text-brand-red w-4"></i> XMPP / Jabber (Prosody)
+                    </a>
+
+                    <div class="px-3 py-2 mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">Evaluasi</div>
+                    <a href="#checklist" class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-brand-card transition-all">
+                        <i class="fa-solid fa-square-check text-brand-red w-4"></i> Checklist Verifikasi
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0 pb-16">
+
+            <!-- Hero / Banner Header -->
+            <section id="pendahuluan" class="relative rounded-2xl bg-gradient-to-br from-brand-card via-brand-card to-black border border-brand-cardBorder p-6 sm:p-8 mb-8 overflow-hidden red-glow-sm">
+                <!-- Background Accent Glow -->
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-semibold uppercase tracking-wider">
+                        <i class="fa-solid fa-book-bookmark"></i> Dokumentasi Prosedur Praktikum TKJ
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+                        Panduan Konfigurasi Layanan Jaringan & Server <span class="text-brand-red text-glow">Linux Administrator</span>
+                    </h1>
+
+                    <p class="text-gray-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                        Dokumentasi langkah demi langkah konfigurasi komprehensif administrasi server berbasis sistem operasi Linux (Debian 13 Trixie / Ubuntu Server). Dirancang khusus untuk pengujian laboratorium jaringan komputer dengan domain konsisten <span class="text-white font-mono underline decoration-brand-red font-semibold">yoel.com</span>.
+                    </p>
+
+                    <!-- Quote Block (Requested Motif) -->
+                    <div class="mt-6 p-4 rounded-xl bg-black/60 border-l-4 border-brand-red border-y border-r border-brand-cardBorder">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-quote-left text-brand-red text-2xl shrink-0 mt-1"></i>
+                            <div>
+                                <p class="text-xs sm:text-sm italic font-medium text-gray-200 leading-snug">
+                                    "Cobalah dulu baru bercerita, pahamilah dulu baru menjawab, pikirkanlah dulu baru berkata, dengarkanlah dulu baru ngomong, dan bekerjalah dulu baru berharap."
+                                </p>
+                                <span class="block mt-2 text-xs font-bold text-brand-red uppercase tracking-wider">&mdash; Motto Yoanes Yoel Abadi Tampubolon</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Creator Card (Mobile & Detailed) -->
+                    <div class="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-brand-cardBorder text-xs text-gray-300">
+                        <div class="flex items-center gap-2 bg-brand-black/50 p-2.5 rounded-lg border border-brand-cardBorder">
+                            <i class="fa-solid fa-user text-brand-red text-sm"></i>
+                            <div>
+                                <span class="block text-gray-500 text-[10px] uppercase font-bold">Pembuat</span>
+                                <span class="font-bold text-white">Yoanes Yoel Abadi T.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-brand-black/50 p-2.5 rounded-lg border border-brand-cardBorder">
+                            <div class="fa-solid fa-graduation-cap text-brand-red text-sm"></div>
+                            <div>
+                                <span class="block text-gray-500 text-[10px] uppercase font-bold">Kelas & Jurusan</span>
+                                <span class="font-bold text-white">XI TKJ 1</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-brand-black/50 p-2.5 rounded-lg border border-brand-cardBorder">
+                            <i class="fa-solid fa-school text-brand-red text-sm"></i>
+                            <div>
+                                <span class="block text-gray-500 text-[10px] uppercase font-bold">Instansi Sekolah</span>
+                                <span class="font-bold text-white">SMKN 9 Kab. Tangerang</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prerequisite Section -->
+            <section id="prasyarat" class="bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-10">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2.5 mb-4">
+                    <i class="fa-solid fa-list-check text-brand-red"></i> Prasyarat & Lingkungan Server
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-brand-black p-4 rounded-xl border border-brand-cardBorder space-y-2">
+                        <span class="text-xs font-bold uppercase text-brand-red tracking-wider">Topologi Network Server</span>
+                        <ul class="space-y-1.5 text-gray-300 font-mono text-xs">
+                            <li class="flex justify-between"><span class="text-gray-500">Hostname:</span> <span class="text-white font-bold">server-yoel</span></li>
+                            <li class="flex justify-between"><span class="text-gray-500">IP Server:</span> <span class="text-white font-bold">192.168.100.1 /24</span></li>
+                            <li class="flex justify-between"><span class="text-gray-500">Domain Utama:</span> <span class="text-brand-red font-bold">yoel.com</span></li>
+                            <li class="flex justify-between"><span class="text-gray-500">Subdomain Web:</span> <span class="text-white">www.yoel.com</span></li>
+                            <li class="flex justify-between"><span class="text-gray-500">Mail Domain:</span> <span class="text-white">mail.yoel.com</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-brand-black p-4 rounded-xl border border-brand-cardBorder space-y-2">
+                        <span class="text-xs font-bold uppercase text-brand-red tracking-wider">Kebutuhan Akses Root</span>
+                        <p class="text-xs text-gray-400">Pastikan login sebagai superuser <code class="text-brand-red bg-red-950/40 px-1 rounded">root</code> atau gunakan prefix <code class="text-brand-red bg-red-950/40 px-1 rounded">sudo</code> sebelum menjalankan perintah konfigurasi.</p>
+                        <div class="pt-2">
+                            <code class="block text-xs font-mono bg-black p-2 rounded text-emerald-400 border border-brand-cardBorder">sudo su -</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: LAYANAN JARIKGAN DASAR -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-black text-white tracking-wide border-b border-brand-red/30 pb-2 flex items-center gap-2">
+                    <span class="text-brand-red">A.</span> LAYANAN JARIKGAN DASAR
+                </h2>
+            </div>
+
+            <!-- 1. DHCP Server -->
+            <article id="dhcp-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">1</span>
+                        DHCP Server (isc-dhcp-server)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 67/68 UDP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan pengalokasian IP Address secara otomatis kepada komputer client di dalam jaringan lokal.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi Paket:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt update && apt install isc-dhcp-server -y</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Konfigurasi /etc/dhcp/dhcpd.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">subnet 192.168.100.0 netmask 255.255.255.0 {
+    range 192.168.100.10 192.168.100.50;
+    option domain-name-servers 192.168.100.1;
+    option domain-name "yoel.com";
+    option routers 192.168.100.1;
+    option broadcast-address 192.168.100.255;
+    default-lease-time 600;
+    max-lease-time 7200;
+}</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">3. Tentukan Interface Interface (/etc/default/isc-dhcp-server):</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">INTERFACESv4="eth0"</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">4. Control & Status:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart isc-dhcp-server
+systemctl status isc-dhcp-server</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 2. DNS Server (BIND9) -->
+            <article id="dns-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">2</span>
+                        DNS Server (BIND9 - domain: yoel.com)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 53 UDP/TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Penerjemah dari nama domain (<code class="text-brand-red">yoel.com</code>) menjadi IP Address atau sebaliknya.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi Paket:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install bind9 bind9utils bind9-doc -y</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Konfigurasi Zone (/etc/bind/named.conf.local):</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">zone "yoel.com" {
+    type master;
+    file "/etc/bind/db.yoel";
+};
+
+zone "100.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192";
+};</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">3. Buat File Forward (/etc/bind/db.yoel):</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">$TTL    604800
+@       IN      SOA     yoel.com. root.yoel.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      yoel.com.
+@       IN      A       192.168.100.1
+www     IN      A       192.168.100.1
+mail    IN      A       192.168.100.1
+@       IN      MX  10  mail.yoel.com.</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">4. Buat File Reverse (/etc/bind/db.192):</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">$TTL    604800
+@       IN      SOA     yoel.com. root.yoel.com. (
+                              1         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      yoel.com.
+1       IN      PTR     yoel.com.</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">5. Restart & Pengujian DNS:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart bind9
+nslookup yoel.com
+dig yoel.com</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 3. NTP Server -->
+            <article id="ntp-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">3</span>
+                        NTP Server (Chrony)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 123 UDP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Sinkronisasi waktu presisi untuk seluruh perangkat client di jaringan local.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Edit /etc/chrony/chrony.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install chrony -y
+
+# Tambahkan atau ubah baris berikut pada /etc/chrony/chrony.conf:
+allow 192.168.100.0/24
+local stratum 10</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Restart & Verifikasi:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart chrony
+chronyc tracking
+chronyc sources</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 4. Proxy Server (Squid) -->
+            <article id="proxy-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">4</span>
+                        Proxy Server (Squid)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 3128 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan perantara akses web, caching, dan pemfilteran situs web.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Edit /etc/squid/squid.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install squid -y
+
+# Tambahkan aturan ACL pada file /etc/squid/squid.conf:
+acl lan_local src 192.168.100.0/24
+acl situs_blok dstdomain .facebook.com .youtube.com
+
+http_access deny situs_blok
+http_access allow lan_local
+http_port 3128</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Control & Restart:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart squid
+systemctl status squid</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- SECTION 2: WEB & DATA -->
+            <div class="mb-6 mt-12">
+                <h2 class="text-2xl font-black text-white tracking-wide border-b border-brand-red/30 pb-2 flex items-center gap-2">
+                    <span class="text-brand-red">B.</span> LAYANAN WEB & DATA
+                </h2>
+            </div>
+
+            <!-- 5. Web Server (Apache2) -->
+            <article id="web-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">5</span>
+                        Web Server (Apache2 VirtualHost yoel.com)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 80 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan penyedia halaman web interaktif menggunakan HTTP Apache2.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi Apache2 & PHP:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install apache2 php libapache2-mod-php -y</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. VirtualHost /etc/apache2/sites-available/yoel.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">&lt;VirtualHost *:80&gt;
+    ServerAdmin admin@yoel.com
+    ServerName yoel.com
+    ServerAlias www.yoel.com
+    DocumentRoot /var/www/yoel
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">3. Buat Folder & Halaman Web (/var/www/yoel/index.html):</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">mkdir -p /var/www/yoel
+echo "&lt;h1&gt;Selamat Datang di Web Server yoel.com - SMKN 9 Kab. Tangerang&lt;/h1&gt;" &gt; /var/www/yoel/index.html
+chown -R www-data:www-data /var/www/yoel</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">4. Aktivasi VirtualHost & Restart:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">a2ensite yoel.conf
+a2dissite 000-default.conf
+systemctl restart apache2</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 6. Database Server (MariaDB) -->
+            <article id="database-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">6</span>
+                        Database Server (MariaDB)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 3306 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan penyimpanan data terstruktur relasional (RDBMS).</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Amankan Database:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install mariadb-server mariadb-client -y
+mariadb-secure-installation</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Buat Database & User:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-sql">-- Masuk CLI MariaDB: mariadb -u root -p
+CREATE DATABASE db_yoel;
+CREATE USER 'yoel_user'@'localhost' IDENTIFIED BY 'Password123!';
+GRANT ALL PRIVILEGES ON db_yoel.* TO 'yoel_user'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- SECTION 3: BERBAGI BERKAS -->
+            <div class="mb-6 mt-12">
+                <h2 class="text-2xl font-black text-white tracking-wide border-b border-brand-red/30 pb-2 flex items-center gap-2">
+                    <span class="text-brand-red">C.</span> LAYANAN BERBAGI BERKAS
+                </h2>
+            </div>
+
+            <!-- 7. Samba Server -->
+            <article id="samba-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">7</span>
+                        Samba (SMB/CIFS Sharing)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 139, 445 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan berbagi direktori dan berkas lintas platform antara Linux dan Windows.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Buat Directory:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install samba -y
+mkdir -p /home/share_yoel
+chmod 777 /home/share_yoel</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Konfigurasi /etc/samba/smb.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">[Data_Yoel]
+   path = /home/share_yoel
+   browsable = yes
+   writable = yes
+   guest ok = yes
+   read only = no</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">3. Restart Samba:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart smbd</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 8. NFS Server -->
+            <article id="nfs-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">8</span>
+                        Network File System (NFS)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 2049 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Protokol berbagai file antar sistem operasi Unix/Linux berkecepatan tinggi.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi Paket & Edit /etc/exports:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install nfs-kernel-server -y
+mkdir -p /mnt/nfs_yoel
+
+# Tambahkan baris di /etc/exports:
+/mnt/nfs_yoel 192.168.100.0/24(rw,sync,no_subtree_check)</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Export Shares & Restart:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">exportfs -a
+systemctl restart nfs-kernel-server</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 9. FTP Server (vsftpd) -->
+            <article id="ftp-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">9</span>
+                        FTP Server (vsftpd)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 20, 21 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">File Transfer Protocol aman dan cepat untuk upload/download berkas web server.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Edit /etc/vsftpd.conf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install vsftpd -y
+
+# Aktifkan opsi berikut di /etc/vsftpd.conf:
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+chroot_local_user=YES</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Control Service:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart vsftpd</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- SECTION 4: KEAMANAN & REMOTING -->
+            <div class="mb-6 mt-12">
+                <h2 class="text-2xl font-black text-white tracking-wide border-b border-brand-red/30 pb-2 flex items-center gap-2">
+                    <span class="text-brand-red">D.</span> KEAMANAN & AKSES REMOTE
+                </h2>
+            </div>
+
+            <!-- 10. SSH Server -->
+            <article id="ssh-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">10</span>
+                        SSH Remote Access (OpenSSH)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 22 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Akses terminal jarak jauh berbasis enkripsi teraman.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Hardening /etc/ssh/sshd_config:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install openssh-server -y
+
+# Keamanan dasar: Ubah port default & matikan login root langsung
+Port 2222
+PermitRootLogin no</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Restart SSH:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart ssh</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 11. Firewall (UFW) -->
+            <article id="firewall-ufw" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">11</span>
+                        Firewall UFW (Uncomplicated Firewall)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Security Layer</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Sistem pemfilteran lalu lintas jaringan berbasis rule port.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Konfigurasi Rules Utama:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">ufw default deny incoming
+ufw default allow outgoing
+ufw allow 80/tcp
+ufw allow 53/udp
+ufw allow 2222/tcp
+ufw enable
+ufw status verbose</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 12. Intrusion Prevention (Fail2ban) -->
+            <article id="fail2ban-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">12</span>
+                        Fail2ban (Proteksi Brute-Force)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">IDS/IPS</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Pencegah serangan brute-force dengan cara otomatis memblokir IP penyerang.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Konfigurasi /etc/fail2ban/jail.local:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install fail2ban -y
+
+# Buat file /etc/fail2ban/jail.local:
+[sshd]
+enabled = true
+port = 2222
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 3600</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Restart Service:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart fail2ban
+fail2ban-client status sshd</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- SECTION 5: KOMUNIKASI -->
+            <div class="mb-6 mt-12">
+                <h2 class="text-2xl font-black text-white tracking-wide border-b border-brand-red/30 pb-2 flex items-center gap-2">
+                    <span class="text-brand-red">E.</span> LAYANAN KOMUNIKASI
+                </h2>
+            </div>
+
+            <!-- 13. Mail Server -->
+            <article id="mail-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">13</span>
+                        Mail Server (Postfix & Dovecot)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">SMTP 25, IMAP 143</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan pengiriman & penerimaan surat elektronik lokal domain <code class="text-brand-red">yoel.com</code>.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi Paket:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">apt install postfix dovecot-imapd dovecot-pop3d -y</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Konfigurasi /etc/postfix/main.cf:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">myhostname = mail.yoel.com
+mydomain = yoel.com
+myorigin = $mydomain
+mydestination = $myhostname, yoel.com, localhost.$mydomain, localhost
+home_mailbox = Maildir/</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">3. Restart Postfix & Dovecot:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">systemctl restart postfix dovecot</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 14. XMPP Server (Prosody) -->
+            <article id="xmpp-server" class="service-card bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mb-8 transition-all hover:border-brand-red/40">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 text-brand-red flex items-center justify-center text-sm font-extrabold">14</span>
+                        Jabber / XMPP Instant Messaging (Prosody)
+                    </h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-brand-black border border-brand-cardBorder text-gray-400">Port 5222 TCP</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-4">Layanan perpesanan instan real-time lokal domain <code class="text-brand-red">yoel.com</code>.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">1. Instalasi & Edit /etc/prosody/prosody.cfg.lua:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-lua">apt install prosody -y
+
+-- Tambahkan VirtualHost di /etc/prosody/prosody.cfg.lua:
+VirtualHost "yoel.com"</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs font-bold text-brand-red uppercase tracking-wider">2. Buat User Chat & Restart:</span>
+                        <div class="relative group mt-1">
+                            <pre class="bg-brand-black p-4 rounded-xl text-xs sm:text-sm font-mono text-gray-200 border border-brand-cardBorder overflow-x-auto"><code class="language-bash">prosodyctl register user1 yoel.com Password123!
+systemctl restart prosody</code></pre>
+                            <button onclick="copyCode(this)" class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-brand-card hover:bg-brand-red text-gray-300 hover:text-white rounded text-xs font-sans transition-colors"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Checklist Section -->
+            <section id="checklist" class="bg-brand-card border border-brand-cardBorder rounded-2xl p-6 mt-12 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                            <i class="fa-solid fa-clipboard-check text-brand-red"></i> Checklist Verifikasi Praktikum
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">Centang setiap modul yang telah berhasil dikonfigurasi dan diuji. Progress otomatis tersimpan.</p>
+                    </div>
+                    <span id="progress-percent" class="text-2xl font-black text-brand-red">0%</span>
+                </div>
+
+                <div id="checklist-items" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <!-- Items populated via JavaScript -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-card border-t border-brand-cardBorder py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-7 h-7 rounded bg-brand-red flex items-center justify-center font-bold text-white text-xs">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+                <span class="font-extrabold text-white tracking-wider">SYSADMIN<span class="text-brand-red">.DOCS</span></span>
+            </div>
+            <p class="text-xs text-gray-400">
+                Hak Cipta &copy; 2026 <span class="text-white font-semibold">Yoanes Yoel Abadi Tampubolon</span> &bull; Kelas XI TKJ 1 &bull; SMKN 9 Kabupaten Tangerang Banten
+            </p>
+            <p class="text-[11px] text-gray-500 font-mono">
+                Domain Pengujian Local: <span class="text-brand-red">yoel.com</span> | Infrastructure Documentation Standard
+            </p>
+        </div>
+    </footer>
+
+    <!-- Interactive Logic JavaScript -->
+    <script>
+        // Copy Code Functionality
+        function copyCode(button) {
+            const pre = button.parentElement.querySelector('pre');
+            const code = pre.querySelector('code').innerText;
+            
+            // Clipboard Copy Command
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = code;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            // Button Feedback
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied!';
+            button.classList.add('bg-emerald-950', 'text-emerald-400', 'border', 'border-emerald-500/40');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('bg-emerald-950', 'text-emerald-400', 'border', 'border-emerald-500/40');
+            }, 2000);
+        }
+
+        // Search Filter Logic
+        const searchInput = document.getElementById('search-input');
+        const serviceCards = document.querySelectorAll('.service-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            serviceCards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Interactive Mobile Drawer Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar when link clicked on mobile
+        document.querySelectorAll('#nav-container a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+
+        // Checklist State with LocalStorage
+        const servicesList = [
+            'DHCP Server (isc-dhcp-server)',
+            'DNS Server (BIND9 yoel.com)',
+            'NTP Server (Chrony)',
+            'Proxy Server (Squid)',
+            'Web Server (Apache2 yoel.com)',
+            'Database Server (MariaDB)',
+            'Samba Share (SMB/CIFS)',
+            'NFS Server',
+            'FTP Server (vsftpd)',
+            'SSH Remote Access',
+            'Firewall UFW',
+            'Fail2ban IPS',
+            'Mail Server (Postfix/Dovecot)',
+            'XMPP Chat (Prosody)'
+        ];
+
+        const checklistContainer = document.getElementById('checklist-items');
+        const progressPercent = document.getElementById('progress-percent');
+
+        function loadChecklist() {
+            const savedState = JSON.parse(localStorage.getItem('sysadmin_checklist_yoel') || '{}');
+            checklistContainer.innerHTML = '';
+            let checkedCount = 0;
+
+            servicesList.forEach((service, idx) => {
+                const isChecked = savedState[idx] || false;
+                if (isChecked) checkedCount++;
+
+                const item = document.createElement('label');
+                item.className = `flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                    isChecked ? 'bg-brand-red/10 border-brand-red/40 text-white' : 'bg-brand-black border-brand-cardBorder text-gray-400 hover:border-gray-600'
+                }`;
+                
+                item.innerHTML = `
+                    <input type="checkbox" data-index="${idx}" ${isChecked ? 'checked' : ''} class="w-4 h-4 accent-brand-red rounded cursor-pointer">
+                    <span class="text-xs font-medium">${service}</span>
+                `;
+
+                item.querySelector('input').addEventListener('change', (e) => {
+                    savedState[idx] = e.target.checked;
+                    localStorage.setItem('sysadmin_checklist_yoel', JSON.stringify(savedState));
+                    loadChecklist();
+                });
+
+                checklistContainer.appendChild(item);
+            });
+
+            const percent = Math.round((checkedCount / servicesList.length) * 100);
+            progressPercent.textContent = `${percent}%`;
+        }
+
+        // Active Scrollspy for Navigation
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('article[id], section[id]');
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Initial Load
+        loadChecklist();
+    </script>
+</body>
+</html>

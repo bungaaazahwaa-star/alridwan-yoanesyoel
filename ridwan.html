@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ridwan Shoes -  </title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fffbe6',
+                            100: '#fff3b8',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#0f172a',
+                            accent: '#fbbf24'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b45309;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 min-h-screen flex flex-col justify-between">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- NAVBAR / HEADER -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                        R
+                    </div>
+                    <div>
+                        <span class="text-2xl font-black tracking-wider text-white">RIDWAN<span class="text-amber-500">.</span></span>
+                        <span class="block text-[10px] tracking-widest text-slate-400 font-medium -mt-1 uppercase">Footwear Co.</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-8 font-medium text-sm text-slate-300">
+                    <a href="#beranda" class="hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent hover:border-amber-400">Beranda</a>
+                    <a href="#katalog" class="hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent hover:border-amber-400">Koleksi Produk</a>
+                    <a href="#keunggulan" class="hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent hover:border-amber-400">Keunggulan</a>
+                    <a href="#testimoni" class="hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent hover:border-amber-400">Testimoni</a>
+                </nav>
+
+                <!-- Search Input & Cart Button -->
+                <div class="flex items-center gap-4">
+                    <!-- Search Input Widget -->
+                    <div class="relative hidden sm:block w-48 lg:w-64">
+                        <input type="text" id="search-input" placeholder="Cari sepatu..." 
+                            class="w-full bg-slate-800/80 border border-slate-700 text-sm rounded-full py-2 pl-9 pr-4 text-slate-200 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    </div>
+
+                    <!-- Cart Trigger Button -->
+                    <button id="open-cart-btn" class="relative p-2.5 rounded-full bg-slate-800 border border-slate-700 text-slate-200 hover:text-amber-400 hover:border-amber-500/50 transition-all group">
+                        <i class="fa-solid fa-bag-shopping text-lg"></i>
+                        <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center scale-0 transition-transform shadow-md">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+            <div class="relative my-2">
+                <input type="text" id="mobile-search-input" placeholder="Cari sepatu..." 
+                    class="w-full bg-slate-800 border border-slate-700 text-sm rounded-lg py-2 pl-9 pr-4 text-slate-200 placeholder-slate-400">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            </div>
+            <a href="#beranda" class="block py-2 text-slate-300 hover:text-amber-400 font-medium">Beranda</a>
+            <a href="#katalog" class="block py-2 text-slate-300 hover:text-amber-400 font-medium">Koleksi Produk</a>
+            <a href="#keunggulan" class="block py-2 text-slate-300 hover:text-amber-400 font-medium">Keunggulan</a>
+            <a href="#testimoni" class="block py-2 text-slate-300 hover:text-amber-400 font-medium">Testimoni</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section id="beranda" class="relative overflow-hidden pt-8 pb-20 lg:pt-16 lg:pb-28">
+            <!-- Background Glow Dynamic Effects -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/3 right-10 w-72 h-72 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+                            <i class="fa-solid fa-crown text-amber-400"></i> Premium Indonesian Footwear
+                        </div>
+                        
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+                            Langkah Percaya Diri Bersama <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600">Ridwan Shoes</span>
+                        </h1>
+                        
+                        <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                            Kombinasi sempurna antara kenyamanan berkelas, ketahanan material premium, dan keanggunan desain modern. Dibuat khusus untuk mendukung setiap momen terbaik dalam hidup Anda.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                            <a href="#katalog" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-base shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 transition-all text-center flex items-center justify-center gap-3 group">
+                                <span>Jelajahi Koleksi</span>
+                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <a href="#keunggulan" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-200 font-semibold text-base transition-all text-center">
+                                Pelajari Keunggulan
+                            </a>
+                        </div>
+
+                        <!-- Brand Stats -->
+                        <div class="pt-8 border-t border-slate-800/80 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+                            <div>
+                                <p class="text-2xl sm:text-3xl font-extrabold text-white">10K+</p>
+                                <p class="text-xs text-slate-400 mt-1">Pelanggan Puas</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl sm:text-3xl font-extrabold text-white">100%</p>
+                                <p class="text-xs text-slate-400 mt-1">Kulit Asli/Premium</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl sm:text-3xl font-extrabold text-white">4.9/5</p>
+                                <p class="text-xs text-slate-400 mt-1">Rating Produk</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Showcase Visual -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md lg:max-w-none">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent rounded-3xl transform rotate-3 blur-sm"></div>
+                            <div class="relative bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-2xl overflow-hidden group">
+                                <div class="absolute top-4 right-4 bg-amber-500 text-slate-950 text-xs font-bold px-3 py-1 rounded-full z-10 shadow">
+                                    BEST SELLER
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80" 
+                                    alt="Ridwan Shoes Flagship" 
+                                    class="w-full h-[360px] sm:h-[420px] object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500">
+                                
+                                <div class="p-4 bg-slate-900/90 backdrop-blur-sm rounded-xl mt-3 border border-slate-800/80 flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-bold text-white text-base">Ridwan Executive Crimson</h3>
+                                        <p class="text-xs text-amber-400 font-semibold">Rp 1.299.000</p>
+                                    </div>
+                                    <button onclick="quickAddToCart('p1')" class="bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-slate-950 p-2.5 rounded-lg transition-colors">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- KEUNGGULAN SECTION -->
+        <section id="keunggulan" class="py-16 bg-slate-900/50 border-y border-slate-800/60 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-xs font-bold text-amber-500 tracking-widest uppercase mb-2">Mengapa Memilih Kami</h2>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-white">Keunggulan Sepatu Brand Ridwan</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Feature Card 1 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 p-6 rounded-2xl transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Bahan Leather Premium</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Menggunakan kulit kualitas tinggi pilihan yang tahan lama, elegan, dan fleksibel.</p>
+                    </div>
+
+                    <!-- Feature Card 2 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 p-6 rounded-2xl transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                            <i class="fa-solid fa-feather-pointed"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Desain Ergonomis</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Insole empuk dan menyesuaikan bentuk kaki untuk kenyamanan sepanjang hari tanpa pegal.</p>
+                    </div>
+
+                    <!-- Feature Card 3 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 p-6 rounded-2xl transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Garansi Kualitas 100%</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Jaminan retur dan garansi servis jahitan jika ada kerusakan manufaktur dalam 30 hari.</p>
+                    </div>
+
+                    <!-- Feature Card 4 -->
+                    <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 p-6 rounded-2xl transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Gratis Ongkos Kirim</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Layanan bebas biaya pengiriman ke seluruh daerah di Jawa & Bali untuk setiap pembelian.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KATALOG PRODUK SECTION -->
+        <section id="katalog" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                    <div>
+                        <h2 class="text-xs font-bold text-amber-500 tracking-widest uppercase mb-2">Katalog Eksklusif</h2>
+                        <p class="text-3xl font-extrabold text-white">Koleksi Sepatu Ridwan</p>
+                    </div>
+
+                    <!-- Filter Categories Bar -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="category-filters">
+                        <button onclick="filterCategory('all')" class="category-btn active px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-amber-500 text-slate-950">
+                            Semua
+                        </button>
+                        <button onclick="filterCategory('Sneakers')" class="category-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:border-amber-500/50">
+                            Sneakers
+                        </button>
+                        <button onclick="filterCategory('Formal')" class="category-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:border-amber-500/50">
+                            Formal
+                        </button>
+                        <button onclick="filterCategory('Casual')" class="category-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:border-amber-500/50">
+                            Casual
+                        </button>
+                        <button onclick="filterCategory('Olahraga')" class="category-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:border-amber-500/50">
+                            Olahraga
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Dynamic Grid -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Products rendered dynamically via JavaScript -->
+                </div>
+
+                <!-- Empty State Search Result -->
+                <div id="no-products" class="hidden text-center py-16 bg-slate-900/40 rounded-3xl border border-slate-800">
+                    <i class="fa-solid fa-shoe-prints text-5xl text-slate-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-1">Produk Tidak Ditemukan</h3>
+                    <p class="text-slate-400 text-sm">Coba kata kunci lain atau pilih kategori yang berbeda.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TESTIMONI SECTION -->
+        <section id="testimoni" class="py-20 bg-slate-900/30 border-t border-slate-800/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <h2 class="text-xs font-bold text-amber-500 tracking-widest uppercase mb-2">Suara Pelanggan</h2>
+                    <p class="text-3xl font-extrabold text-white">Apa Kata Mereka tentang Ridwan Shoes?</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex text-amber-400 text-sm mb-4">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">"Sepatu Formal Leather Executive dari Ridwan beneran juara. Kulitnya halus, jahitan rapi banget, dan dipakai rapat seharian tetep nyaman nggak bikin kaki sakit."</p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">B</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Budi Santoso</h4>
+                                <p class="text-slate-500 text-xs">Executive Manager, Jakarta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex text-amber-400 text-sm mb-4">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">"Beli Ridwan Urban Classic untuk harian. Desainnya stylish abis! Banyak temen kantor yang nanya beli dimana. Worth it banget sama harganya."</p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">R</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Rian Pratama</h4>
+                                <p class="text-slate-500 text-xs">Creative Director, Bandung</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex text-amber-400 text-sm mb-4">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-6">"Pengiriman cepet banget, packaging aman & dapet bonus dustbag. Sepatu lari Ridwan Sport Elite sangat ringan dan responsive buat jogging sore."</p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">A</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Andi Wijaya</h4>
+                                <p class="text-slate-500 text-xs">Runner & Enthusiast, Surabaya</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- CART SIDEBAR / DRAWER MODAL -->
+    <div id="cart-drawer-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out">
+            
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-bag-shopping text-amber-500 text-xl"></i>
+                    <h3 class="text-lg font-bold text-white">Keranjang Belanja</h3>
+                </div>
+                <button id="close-cart-btn" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List Container -->
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Cart Items will be dynamically inserted here -->
+            </div>
+
+            <!-- Cart Footer Summary & Checkout Button -->
+            <div class="p-6 border-t border-slate-800 bg-slate-950/50 space-y-4">
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm text-slate-400">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal" class="text-slate-200 font-medium">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-slate-400">
+                        <span>Ongkos Kirim</span>
+                        <span class="text-amber-400 font-medium">GRATIS</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-slate-800">
+                        <span>Total Bayar</span>
+                        <span id="cart-total" class="text-amber-400">Rp 0</span>
+                    </div>
+                </div>
+
+                <button id="checkout-btn" onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-center shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Checkout via WhatsApp</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="product-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="product-modal-content">
+            <!-- Modal Body injected dynamically -->
+        </div>
+    </div>
+
+    <!-- CHECKOUT FORM MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Lengkapi Detail Pesanan</h3>
+                <p class="text-xs text-slate-400 mt-1">Pesanan Anda akan langsung dikirim ke WhatsApp resmi Ridwan Shoes</p>
+            </div>
+
+            <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap *</label>
+                    <input type="text" id="cust-name" required placeholder="Contoh: Budi Santoso" 
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Nomor WhatsApp *</label>
+                    <input type="tel" id="cust-phone" required placeholder="Contoh: 08123456789" 
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Alamat Lengkap Pengiriman *</label>
+                    <textarea id="cust-address" required rows="3" placeholder="Jl. Sudirman No. 123, Kel. Kebayoran, Jakarta Selatan" 
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
+                    <input type="text" id="cust-notes" placeholder="Ukuran cadangan / instruksi kurir" 
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-center shadow-lg transition-all flex items-center justify-center gap-2 mt-6">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Kirim Pesanan ke WhatsApp</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
+                
+                <!-- Brand Info -->
+                <div class="lg:col-span-2 space-y-4">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-slate-950 font-black text-lg">
+                            R
+                        </div>
+                        <span class="text-xl font-black tracking-wider text-white">RIDWAN<span class="text-amber-500">.</span></span>
+                    </a>
+                    <p class="text-slate-400 text-sm max-w-sm leading-relaxed">
+                        Produsen sepatu lokal berkualitas dunia. Menghadirkan kenyamanan dan kepercayaan diri di setiap langkah Anda.
+                    </p>
+                    <div class="flex gap-3 text-slate-400 pt-2">
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 transition-colors"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4">Navigasi Cepat</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><a href="#beranda" class="hover:text-amber-400 transition-colors">Beranda</a></li>
+                        <li><a href="#katalog" class="hover:text-amber-400 transition-colors">Koleksi Terbaru</a></li>
+                        <li><a href="#keunggulan" class="hover:text-amber-400 transition-colors">Keunggulan Brand</a></li>
+                        <li><a href="#testimoni" class="hover:text-amber-400 transition-colors">Testimoni Pelanggan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Product Categories -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4">Kategori Sepatu</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><a href="#katalog" onclick="filterCategory('Sneakers')" class="hover:text-amber-400 transition-colors">Sneakers Modern</a></li>
+                        <li><a href="#katalog" onclick="filterCategory('Formal')" class="hover:text-amber-400 transition-colors">Sepatu Formal Leather</a></li>
+                        <li><a href="#katalog" onclick="filterCategory('Casual')" class="hover:text-amber-400 transition-colors">Casual Daily Wear</a></li>
+                        <li><a href="#katalog" onclick="filterCategory('Olahraga')" class="hover:text-amber-400 transition-colors">Sepatu Olahraga/Sport</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact & Support -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4">Layanan Kontak</h4>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot text-amber-500 mt-1"></i>
+                            <span>Jakarta, Indonesia</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-brands fa-whatsapp text-amber-500"></i>
+                            <span>+62 812-3456-7890</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-amber-500"></i>
+                            <span>support@ridwanshoes.com</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>&copy; 2026 Ridwan Shoes. Hak Cipta Dilindungi Undang-Undang.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-slate-400">Kebijakan Privasi</a>
+                    <a href="#" class="hover:text-slate-400">Syarat & Ketentuan</a>
+                    <a href="#" class="hover:text-slate-400">Garansi & Retur</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // PRODUCT DATA STORE
+        // -------------------------------------------------------------
+        const productsData = [
+            {
+                id: 'p1',
+                name: 'Ridwan Executive Crimson',
+                category: 'Formal',
+                price: 1299000,
+                rating: 5.0,
+                reviewsCount: 48,
+                image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
+                description: 'Sepatu formal premium berbahan kulit asli pilihan dengan finishing elegan. Cocok untuk acara formal, bisnis, dan acara resmi.',
+                sizes: [39, 40, 41, 42, 43, 44]
+            },
+            {
+                id: 'p2',
+                name: 'Ridwan Urban Runner White',
+                category: 'Sneakers',
+                price: 799000,
+                rating: 4.8,
+                reviewsCount: 92,
+                image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+                description: 'Sneakers casual berbahan breathability mesh tinggi dan insole empuk. Nyaman digunakan sepanjang hari untuk mobilitas perkotaan.',
+                sizes: [38, 39, 40, 41, 42, 43]
+            },
+            {
+                id: 'p3',
+                name: 'Ridwan Sport Elite Performance',
+                category: 'Olahraga',
+                price: 899000,
+                rating: 4.9,
+                reviewsCount: 65,
+                image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
+                description: 'Sepatu olahraga ringan dengan bantalan ekstra untuk meredam benturan saat lari atau fitness. Cengkeraman outsole sangat responsif.',
+                sizes: [40, 41, 42, 43, 44]
+            },
+            {
+                id: 'p4',
+                name: 'Ridwan Casual Loafer Tan',
+                category: 'Casual',
+                price: 649000,
+                rating: 4.7,
+                reviewsCount: 38,
+                image: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=800&q=80',
+                description: 'Loafer santai gaya slip-on yang mudah digunakan. Memberikan tampilan berkelas namun tetap santai.',
+                sizes: [39, 40, 41, 42, 43]
+            },
+            {
+                id: 'p5',
+                name: 'Ridwan Classic High Top',
+                category: 'Sneakers',
+                price: 849000,
+                rating: 4.9,
+                reviewsCount: 110,
+                image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80',
+                description: 'Desain retro high-top legendaris dari Ridwan Shoes. Sangat stylish dipadukan dengan celana denim maupun chino.',
+                sizes: [39, 40, 41, 42, 43, 44]
+            },
+            {
+                id: 'p6',
+                name: 'Ridwan Oxford Midnight Black',
+                category: 'Formal',
+                price: 1199000,
+                rating: 4.8,
+                reviewsCount: 29,
+                image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80',
+                description: 'Sepatu model Oxford hitam berkilau dengan siluet tegas dan profesional. Pilihan terbaik pria eksekutif.',
+                sizes: [40, 41, 42, 43, 44]
+            },
+            {
+                id: 'p7',
+                name: 'Ridwan Flex Trainer Navy',
+                category: 'Olahraga',
+                price: 749000,
+                rating: 4.6,
+                reviewsCount: 54,
+                image: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80',
+                description: 'Sepatu training serbaguna dengan fleksibilitas maksimal. Mendukung aktivitas workout, gym, dan lari jarak menengah.',
+                sizes: [39, 40, 41, 42, 43]
+            },
+            {
+                id: 'p8',
+                name: 'Ridwan Daily Comfort Moccasin',
+                category: 'Casual',
+                price: 599000,
+                rating: 4.7,
+                reviewsCount: 42,
+                image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80',
+                description: 'Sepatu moccasin super empuk dan fleksibel. Sangat cocok untuk perjalanan santai atau berkendara.',
+                sizes: [38, 39, 40, 41, 42]
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // STATE MANAGEMENT
+        // -------------------------------------------------------------
+        let cart = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // -------------------------------------------------------------
+        // UTILITY FUNCTIONS
+        // -------------------------------------------------------------
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-slate-900 border-amber-500/50 text-white' : 'bg-slate-900 border-red-500/50 text-white';
+            const icon = type === 'success' ? 'fa-check-circle text-amber-400' : 'fa-circle-exclamation text-red-400';
+
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl ${bgColor} transition-all duration-300 transform translate-y-2 pointer-events-auto`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // -------------------------------------------------------------
+        // RENDER PRODUCTS GRID
+        // -------------------------------------------------------------
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const noProducts = document.getElementById('no-products');
+
+            // Filter logic
+            const filtered = productsData.filter(p => {
+                const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      p.category.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noProducts.classList.remove('hidden');
+                return;
+            } else {
+                noProducts.classList.add('hidden');
+            }
+
+            grid.innerHTML = filtered.map(product => `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <!-- Product Image Box -->
+                        <div class="relative overflow-hidden aspect-[4/3] bg-slate-950">
+                            <img src="${product.image}" alt="${product.name}" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-800 text-xs text-amber-400 px-2.5 py-1 rounded-md font-semibold">
+                                ${product.category}
+                            </div>
+                        </div>
+
+                        <!-- Product Content -->
+                        <div class="p-5">
+                            <div class="flex items-center gap-1.5 text-amber-400 text-xs mb-2">
+                                <i class="fa-solid fa-star"></i>
+                                <span class="font-bold">${product.rating}</span>
+                                <span class="text-slate-500">(${product.reviewsCount})</span>
+                            </div>
+
+                            <h3 class="font-bold text-white text-base mb-1 group-hover:text-amber-400 transition-colors line-clamp-1 cursor-pointer" onclick="openProductModal('${product.id}')">
+                                ${product.name}
+                            </h3>
+                            <p class="text-slate-400 text-xs line-clamp-2 mb-4 leading-relaxed">
+                                ${product.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Price & Action Footer -->
+                    <div class="p-5 pt-0 border-t border-slate-800/50 mt-auto pt-4 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-slate-500 uppercase font-semibold">Harga</span>
+                            <span class="text-amber-400 font-extrabold text-base">${formatRupiah(product.price)}</span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="openProductModal('${product.id}')" title="Detail Produk"
+                                class="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
+                                <i class="fa-solid fa-eye text-sm"></i>
+                            </button>
+                            <button onclick="quickAddToCart('${product.id}')" title="Tambah ke Keranjang"
+                                class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>+ Keranjang</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // -------------------------------------------------------------
+        // FILTER & SEARCH HANDLERS
+        // -------------------------------------------------------------
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update active state in UI buttons
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if ((category === 'all' && btn.innerText.trim() === 'Semua') || 
+                    btn.innerText.trim() === category) {
+                    btn.className = "category-btn active px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-amber-500 text-slate-950 shadow-md";
+                } else {
+                    btn.className = "category-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:border-amber-500/50";
+                }
+            });
+
+            renderProducts();
+        }
+
+        // Search inputs setup
+        const searchInput = document.getElementById('search-input');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+
+        function handleSearch(e) {
+            searchQuery = e.target.value;
+            renderProducts();
+        }
+
+        searchInput.addEventListener('input', handleSearch);
+        mobileSearchInput.addEventListener('input', handleSearch);
+
+        // -------------------------------------------------------------
+        // CART OPERATIONS
+        // -------------------------------------------------------------
+        function quickAddToCart(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingIndex = cart.findIndex(item => item.id === productId);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    selectedSize: product.sizes[0], // Default size
+                    quantity: 1
+                });
+            }
+
+            updateCartUI();
+            showToast(`"${product.name}" berhasil ditambahkan!`);
+        }
+
+        function addToCartWithSize(productId, selectedSize) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingIndex = cart.findIndex(item => item.id === productId && item.selectedSize === selectedSize);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    selectedSize: selectedSize,
+                    quantity: 1
+                });
+            }
+
+            updateCartUI();
+            closeProductModal();
+            showToast(`"${product.name}" (Ukuran ${selectedSize}) ditambahkan!`);
+        }
+
+        function changeQuantity(index, delta) {
+            if (cart[index]) {
+                cart[index].quantity += delta;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+                updateCartUI();
+            }
+        }
+
+        function removeFromCart(index) {
+            if (cart[index]) {
+                const removedName = cart[index].name;
+                cart.splice(index, 1);
+                updateCartUI();
+                showToast(`Item dihapus dari keranjang.`, 'info');
+            }
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-count-badge');
+            const itemsContainer = document.getElementById('cart-items-container');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const totalEl = document.getElementById('cart-total');
+
+            // Count total items
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.innerText = totalItems;
+            
+            if (totalItems > 0) {
+                badge.classList.remove('scale-0');
+            } else {
+                badge.classList.add('scale-0');
+            }
+
+            // Calculate totals
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            subtotalEl.innerText = formatRupiah(subtotal);
+            totalEl.innerText = formatRupiah(subtotal);
+
+            // Render items inside drawer
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 text-slate-600"></i>
+                        <p class="text-sm font-medium">Keranjang belanja Anda masih kosong</p>
+                    </div>
+                `;
+                return;
+            }
+
+            itemsContainer.innerHTML = cart.map((item, index) => `
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 flex gap-3 items-center">
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg bg-slate-900">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Ukuran: <span class="text-amber-400 font-semibold">${item.selectedSize}</span></p>
+                        <p class="text-xs font-extrabold text-amber-400 mt-1">${formatRupiah(item.price)}</p>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-2">
+                        <button onclick="removeFromCart(${index})" class="text-slate-500 hover:text-red-400 text-xs p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg p-1">
+                            <button onclick="changeQuantity(${index}, -1)" class="w-5 h-5 flex items-center justify-center text-slate-300 hover:text-white text-xs">-</button>
+                            <span class="text-xs font-bold text-white w-4 text-center">${item.quantity}</span>
+                            <button onclick="changeQuantity(${index}, 1)" class="w-5 h-5 flex items-center justify-center text-slate-300 hover:text-white text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // -------------------------------------------------------------
+        // MODALS & DRAWER CONTROLS
+        // -------------------------------------------------------------
+        const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+        const cartDrawer = document.getElementById('cart-drawer');
+        const openCartBtn = document.getElementById('open-cart-btn');
+        const closeCartBtn = document.getElementById('close-cart-btn');
+
+        function openCart() {
+            cartDrawerOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            cartDrawer.classList.remove('translate-x-full');
+        }
+
+        function closeCart() {
+            cartDrawerOverlay.classList.add('opacity-0', 'pointer-events-none');
+            cartDrawer.classList.add('translate-x-full');
+        }
+
+        openCartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        cartDrawerOverlay.addEventListener('click', (e) => {
+            if (e.target === cartDrawerOverlay) closeCart();
+        });
+
+        // Product Modal Detail View
+        const productModal = document.getElementById('product-modal');
+        const productModalContent = document.getElementById('product-modal-content');
+
+        function openProductModal(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            let selectedSize = product.sizes[0];
+
+            productModalContent.innerHTML = `
+                <div class="relative">
+                    <button onclick="closeProductModal()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-950/80 text-slate-300 hover:text-white flex items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <div class="grid md:grid-cols-2">
+                        <div class="h-64 md:h-auto bg-slate-950">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 sm:p-8 space-y-5">
+                            <div>
+                                <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">${product.category}</span>
+                                <h2 class="text-2xl font-bold text-white mt-1">${product.name}</h2>
+                                <p class="text-xl font-extrabold text-amber-400 mt-2">${formatRupiah(product.price)}</p>
+                            </div>
+
+                            <p class="text-xs text-slate-400 leading-relaxed">${product.description}</p>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-2">Pilih Ukuran (EU):</label>
+                                <div class="flex flex-wrap gap-2" id="modal-size-picker">
+                                    ${product.sizes.map((size, idx) => `
+                                        <button type="button" onclick="selectModalSize(${size})" data-size="${size}" 
+                                            class="modal-size-btn border rounded-xl w-10 h-10 text-xs font-bold transition-all ${idx === 0 ? 'bg-amber-500 text-slate-950 border-amber-500' : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}">
+                                            ${size}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-800 flex gap-3">
+                                <button onclick="addToCartWithSize('${product.id}', getSelectedModalSize())" 
+                                    class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    <span>Tambah ke Keranjang</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            productModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('product-modal-content').classList.remove('scale-95');
+        }
+
+        let currentModalSize = null;
+
+        function selectModalSize(size) {
+            currentModalSize = size;
+            const buttons = document.querySelectorAll('.modal-size-btn');
+            buttons.forEach(btn => {
+                if (parseInt(btn.getAttribute('data-size')) === size) {
+                    btn.className = "modal-size-btn border rounded-xl w-10 h-10 text-xs font-bold transition-all bg-amber-500 text-slate-950 border-amber-500";
+                } else {
+                    btn.className = "modal-size-btn border rounded-xl w-10 h-10 text-xs font-bold transition-all bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500";
+                }
+            });
+        }
+
+        function getSelectedModalSize() {
+            if (currentModalSize) return currentModalSize;
+            const firstBtn = document.querySelector('.modal-size-btn');
+            return firstBtn ? parseInt(firstBtn.getAttribute('data-size')) : 40;
+        }
+
+        function closeProductModal() {
+            productModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('product-modal-content').classList.add('scale-95');
+            currentModalSize = null;
+        }
+
+        productModal.addEventListener('click', (e) => {
+            if (e.target === productModal) closeProductModal();
+        });
+
+        // -------------------------------------------------------------
+        // CHECKOUT & WHATSAPP INTEGRATION
+        // -------------------------------------------------------------
+        const checkoutModal = document.getElementById('checkout-modal');
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Keranjang Anda masih kosong!', 'error');
+                return;
+            }
+            closeCart();
+            checkoutModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeCheckoutModal() {
+            checkoutModal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handleCheckoutSubmit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+            const notes = document.getElementById('cust-notes').value;
+
+            // Formulate WhatsApp Message
+            let message = `*HALO RIDWAN SHOES, SAYA INGIN MEMESAN SEPATU*\n\n`;
+            message += `*Detail Pelanggan:*\n`;
+            message += `• Nama: ${name}\n`;
+            message += `• WhatsApp: ${phone}\n`;
+            message += `• Alamat: ${address}\n`;
+            if (notes) message += `• Catatan: ${notes}\n`;
+            message += `\n*Rincian Pesanan:*\n`;
+
+            let grandTotal = 0;
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                grandTotal += itemTotal;
+                message += `${index + 1}. *${item.name}*\n   - Ukuran: ${item.selectedSize}\n   - Jumlah: ${item.quantity} x ${formatRupiah(item.price)} = *${formatRupiah(itemTotal)}*\n`;
+            });
+
+            message += `\n*Total Pembayaran:* *${formatRupiah(grandTotal)}*\n`;
+            message += `*Ongkos Kirim:* GRATIS\n\n`;
+            message += `Mohon konfirmasi ketersediaan stok dan instruksi pembayaran. Terima kasih!`;
+
+            // Admin Phone Number
+            const adminPhone = "628561417701"; 
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
+
+            // Reset and close
+            closeCheckoutModal();
+            showToast('Mengarahkan ke WhatsApp...', 'success');
+
+            // Redirect to WhatsApp
+            window.open(whatsappURL, '_blank');
+        }
+
+        // Mobile Nav Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // -------------------------------------------------------------
+        // INITIALIZATION
+        // -------------------------------------------------------------
+        window.onload = function() {
+            renderProducts();
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
